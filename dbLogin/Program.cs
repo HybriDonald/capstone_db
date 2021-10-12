@@ -51,14 +51,28 @@ namespace dbLogin
             conn.Open();
             adapter = new OracleDataAdapter(query, conn);
             adapter.Fill(ds);
+            adapter.Dispose();
             conn.Close();
             return ds;
         }
 
         public void insert(string table, string values)
         {
-            string query = $"insert into {table} values({values});";
+            string query = @$"
+                insert into {table} 
+                values({values})
+            ";
+            int row;
+            command = new OracleCommand();
 
+            conn.Open();
+            command.Connection = conn;
+            command.CommandText = query;
+            row = command.ExecuteNonQuery();
+
+            Console.WriteLine($"총 {row}개 삽입됨");
+            conn.Close();
+            command.Dispose();
         }
     }
 
@@ -68,11 +82,9 @@ namespace dbLogin
         {
             Database db = new Database();
 
-            foreach (DataRow r in db.select("id, pw, stu_no", "stu").Tables[0].Rows)
+            foreach (DataRow r in db.select("name", "stu").Tables[0].Rows)
             {
-                Console.WriteLine(r["id"]);
-                Console.WriteLine(r["pw"]);
-                Console.WriteLine(r["stu_no"]);
+                Console.WriteLine(r["name"]);
             }
         }
     }
