@@ -14,9 +14,24 @@ namespace dbLogin
         내부 IP : 192.168.55.85
         
         테이블 목록 
-        학생 : stu
-        교수 : prf
+        학생 :    stu 
+                  { 
+                    id varchar2(15) pk
+                    pw varchar2(20)
+                    name varchar2(10)
+                    stu_no varchar2(15)
+                  }
+        교수 : prf ( 전체적인 테이블은 위와 동일합니다. stu_no가 아닌 prf_no 차이점이 있습니다.)
         강좌 : lec
+                {
+                    lec_code varchar2(10) pk
+                    prf_id varchar2(15) fk
+                    lec_name varchar2(30)
+                    credit number                   // 학점
+                    day varchar2(10)                // 요일
+                    s_time date                     // 시작시간
+                    e_time date                     // 종료시간
+                }
         (작업중)출석 테이블 :   check_table, 
                                 test_attendance_02, 
                                 test_attendance_02_firstclass, 
@@ -70,6 +85,12 @@ namespace dbLogin
             adapter.Fill(ds);
             conn.Close();
             return ds;
+        }
+
+        public void insert(string table, string values)
+        {
+            string query = $"insert into {table} values({values});";
+
         }
     }
 
