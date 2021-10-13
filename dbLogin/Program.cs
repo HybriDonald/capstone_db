@@ -74,6 +74,46 @@ namespace dbLogin
             conn.Close();
             command.Dispose();
         }
+
+        public void update(string table, string value, string where)
+        {
+            string query = @$"
+                update {table} 
+                set {value}
+                where {where}
+            ";
+            int row;
+            command = new OracleCommand();
+
+            conn.Open();
+            command.Connection = conn;
+            command.CommandText = query;
+            Console.WriteLine(query);
+            row = command.ExecuteNonQuery();
+
+            Console.WriteLine($"총 {row}개 수정됨");
+            conn.Close();
+            command.Dispose();
+        }
+
+        public void delete(string table, string where)
+        {
+            string query = @$"
+                delete from {table}
+                where {where}
+            ";
+            int row;
+            command = new OracleCommand();
+
+            conn.Open();
+            command.Connection = conn;
+            command.CommandText = query;
+            row = command.ExecuteNonQuery();
+
+            Console.WriteLine($"총 {row}개 삭제됨");
+            conn.Close();
+            command.Dispose();
+        }
     }
 
     class Program
@@ -86,6 +126,9 @@ namespace dbLogin
             {
                 Console.WriteLine(r["name"]);
             }
+            //db.insert("stu", "'test0', 'test0', 'badman', '201507000'");
+            //db.update("stu", "id = 'test5'", "stu_no = '201507000'");
+            //db.delete("stu", "id = 'test5'");
         }
     }
 }
