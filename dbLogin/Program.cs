@@ -10,7 +10,7 @@ namespace dbLogin
         {
             Database db = new();
 
-            foreach (DataRow r in db.select("name", "stu").Tables[0].Rows)
+            foreach (DataRow r in db.select("name", "student").Tables[0].Rows)
             {
                 Console.WriteLine(r["name"]);
             }
