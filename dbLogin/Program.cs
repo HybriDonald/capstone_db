@@ -13,7 +13,7 @@ namespace dbLogin
 
             var lecture = db.getLecture("TEST1255");
 
-            //lecture.Print();
+            lecture.Print();
 
             //db.insert("stu", "'test0', 'test0', 'badman', '201507000'");
             //db.update("stu", "id = 'test5'", "stu_no = '201507000'");

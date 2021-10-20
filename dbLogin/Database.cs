@@ -130,7 +130,7 @@ namespace dbLogin
         }
 
         /// <summary>
-        /// 데이터를 조회하는 구문입니다. 
+        /// 데이터를 조회하는 함수입니다. 
         /// 컬럼명, 테이블명
         /// </summary>
         /// <param name="col"></param>
@@ -255,7 +255,7 @@ namespace dbLogin
         }
 
         /// <summary>
-        /// 학생의 시간표의 정보를 가져옵니다.
+        /// 학생의 시간표의 정보를 가져오는 함수입니다.
         /// </summary>
         /// <param name="student_Id"></param>
         /// <returns></returns>
@@ -264,6 +264,11 @@ namespace dbLogin
             return ExecuteList(SCHEDULE, student_Id);
         }
 
+        /// <summary>
+        /// 수업 정보를 가져오는 함수입니다.
+        /// </summary>
+        /// <param name="Lecture_code"></param>
+        /// <returns></returns>
         public Lecture getLecture(string Lecture_code)
         {
             Lecture lecture = null;
@@ -274,10 +279,16 @@ namespace dbLogin
             {
                 DataRow[] row = data.Tables[0].Select();
 
-                row[0][0];
+                code = row[0].ItemArray[0].ToString();
+                pro_id = row[0].ItemArray[1].ToString();
+                name = row[0].ItemArray[2].ToString();
+                credit = int.Parse(row[0].ItemArray[3].ToString());
+                week_day = row[0].ItemArray[4].ToString();
+                start_time = row[0].ItemArray[5].ToString();
+                end_time = row[0].ItemArray[6].ToString();
 
 
-                //lecture = new Lecture(code, pro_id, name, credit, week_day, start_time, end_time);
+                lecture = new Lecture(code, pro_id, name, credit, week_day, start_time, end_time);
             }
             return lecture;
         }
