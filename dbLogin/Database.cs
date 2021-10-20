@@ -17,11 +17,13 @@ namespace dbLogin
         private const int STUDENT = 0;
         private const int PROFESSOR = 1;
         private const int SCHEDULE = 2;
+        
 
         private static string dbIp = "192.168.55.85";
         private static string dbName = "deskDB";
         private static string dbId = "C##capstone_admin";
         private static string dbPw = "yuhanunivcapstone1212";
+        private static bool attFlag = false;
         private OracleConnection conn;
         private OracleCommand command;
         private OracleDataAdapter adapter;
@@ -66,7 +68,7 @@ namespace dbLogin
             }
         }
 
-        public List<IInformation> ExecuteList(int flag, string student_Id = "")
+        public List<IInformation> ExecuteList(int flag, string PM = "")
         {
             List<IInformation> result = new List<IInformation>();
             string id, pw, name, studentId, professorId, lecture_code, lecture_name;
@@ -108,7 +110,7 @@ namespace dbLogin
                 case SCHEDULE:
                     Schedule schedule;
 
-                    using (data = Select("Lecture_Code, Lecture_Name", "student_lecture", $"student_id = {student_Id}"))
+                    using (data = Select("Lecture_Code, Lecture_Name", "student_lecture", $"student_id = {PM}"))
                     {
                         foreach (DataRow r in data.Tables[0].Rows)
                         {
@@ -237,7 +239,7 @@ namespace dbLogin
         }
 
         /// <summary>
-        /// 학생들의 모든 정보를 가져오는 함수입니다.
+        /// 전체 학생의 모든 정보를 가져오는 함수입니다.
         /// </summary>
         /// <returns></returns>
         public List<IInformation> GetStudentList()
@@ -269,7 +271,7 @@ namespace dbLogin
         /// </summary>
         /// <param name="Lecture_code"></param>
         /// <returns></returns>
-        public Lecture getLecture(string Lecture_code)
+        public Lecture GetLecture(string Lecture_code)
         {
             Lecture lecture = null;
             string code, pro_id, name, week_day, start_time, end_time;
@@ -291,6 +293,115 @@ namespace dbLogin
                 lecture = new Lecture(code, pro_id, name, credit, week_day, start_time, end_time);
             }
             return lecture;
+        }
+
+        /// <summary>
+        /// 특정 학생의 정보를 가져오는 함수입니다.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Student GetStudent(string id)
+        {
+            Student student;
+            string Id, Pw, student_id, name;
+
+            using (data = Select("*", "student", $"id = '{id}'"))
+            {
+                DataRow[] row = data.Tables[0].Select();
+
+                Id = row[0].ItemArray[0].ToString();
+                Pw = row[0].ItemArray[1].ToString();
+                student_id = row[0].ItemArray[2].ToString();
+                name = row[0].ItemArray[3].ToString();
+
+                student = new Student(Id, Pw, student_id, name);
+            }
+
+            return student;
+        }
+
+        /// <summary>
+        /// 특정 교수의 정보를 가져오는 함수입니다.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Professor GetProfessor(string id)
+        {
+            Professor professor;
+            string Id, Pw, professor_id, name;
+
+            using (data = Select("*", "professor", $"id = '{id}'"))
+            {
+                DataRow[] row = data.Tables[0].Select();
+
+                Id = row[0].ItemArray[0].ToString();
+                Pw = row[0].ItemArray[1].ToString();
+                professor_id = row[0].ItemArray[2].ToString();
+                name = row[0].ItemArray[3].ToString();
+
+                professor = new Professor(Id, Pw, professor_id, name);
+            }
+
+            return professor;
+        }
+
+        /// <summary>
+        /// 특정 강의의 출석표를 생성합니다.
+        /// </summary>
+        /// <param name="Student_Id"></param>
+        /// <param name="Lecture_code"></param>
+        /// <param name="Week_Code"></param>
+        public void PR_Attendance(string Student_Id, string Lecture_code, int Week_Code)
+        {
+            if (!attFlag)
+            {
+                string query = $@"
+                            insert into attendance_mark
+                            values(att_seq.nextval, '{Student_Id}', {Week_Code}, 0, 0, 0);
+                    ";
+
+                Execute(query);
+                attFlag = true;
+            }
+        }
+
+        /// <summary>
+        /// 학생이 특정 강의를 출석하는 함수입니다. <br/>
+        /// </summary>
+        /// <param name="Student_Id"></param>
+        /// <param name="Lecture_code"></param>
+        /// <param name="Week_Code"></param>
+        /// <param name="Class"></param>
+        /// <param name="Att"></param>
+        public void ST_Attendance(string Student_Id, string Lecture_code, int Week_Code, int Class, int Att)
+        {
+            string query;
+            string strClass = "";
+            
+            switch(Class)
+            {
+                case 1:
+                    strClass = "first_class";
+                    break;
+                case 2:
+                    strClass = "second_class";
+                    break;
+                case 3:
+                    strClass = "third_class";
+                    break;
+                default:
+                    Console.WriteLine("값이 올바르지 않습니다.");
+                    return;
+            }
+            query = $@"
+                        update attendance_mark
+                        set {strClass} = {Att}
+                        where student_Id = {Student_Id}
+                        and Lecture_code = {Lecture_code}
+                        and week_code = {Week_Code}
+                        ";
+
+            Execute(query);
         }
     }
 }

@@ -9,11 +9,11 @@ namespace dbLogin
         static void Main(string[] args)
         {
             Database db = new();
-            Student student;
+            IInformation information;
 
-            var lecture = db.getLecture("TEST1255");
+            information = db.GetProfessor("test");
 
-            lecture.Print();
+            information.Print();
 
             //db.insert("stu", "'test0', 'test0', 'badman', '201507000'");
             //db.update("stu", "id = 'test5'", "stu_no = '201507000'");
