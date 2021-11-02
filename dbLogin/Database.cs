@@ -403,5 +403,33 @@ namespace dbLogin
 
             Execute(query);
         }
+
+        /// <summary>
+        /// 학생이 수강하고 있는 강의들 중 시작시간에 해당하는 강의를 가져오는 함수입니다. <br/>
+        /// 시간은 "HHmm" 형식입니다.
+        /// </summary>
+        /// <param name="time"></param>
+        public List<Schedule> GetScheduleAboutTime(string time)
+        {
+            string lecture_code, lecture_name;
+            List<Schedule> result = new List<Schedule>();
+            Schedule schedule;
+
+            using (data = Select("Lecture_Code, Lecture_Name", "student_lecture", @$"Lecture_Code = (
+                                                                                        select Lecture_Code
+                                                                                        from Lecture
+                                                                                        where Start_Time = '{time}')"))
+            {
+                foreach (DataRow r in data.Tables[0].Rows)
+                {
+                    lecture_code = r["lecture_code"].ToString();
+                    lecture_name = r["lecture_name"].ToString();
+                    schedule = new Schedule(lecture_code, lecture_name);
+                    result.Add(schedule);
+                }
+            }
+
+            return result;
+        }
     }
 }
