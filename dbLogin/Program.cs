@@ -1,6 +1,7 @@
 ﻿using System;
 using Oracle.ManagedDataAccess.Client;
 using System.Data;
+using System.Collections.Generic;
 
 namespace dbLogin
 {
@@ -9,11 +10,13 @@ namespace dbLogin
         static void Main(string[] args)
         {
             Database db = new();
-            IInformation information;
 
-            information = db.GetProfessor("test");
+            var information = db.GetScheduleAboutTime("1200");
 
-            information.Print();
+            Lecture lec = db.GetLecture(information[0].LectureCode);
+
+            information[0].Print();
+            lec.Print();
 
             //db.insert("stu", "'test0', 'test0', 'badman', '201507000'");
             //db.update("stu", "id = 'test5'", "stu_no = '201507000'");
