@@ -405,13 +405,14 @@ namespace dbLogin
         /// 시간은 "HHmm" 형식입니다.
         /// </summary>
         /// <param name="time"></param>
-        public List<Schedule> GetScheduleAboutTime(string time)
+        public List<Schedule> GetScheduleAboutTime(string time, string studentID)
         {
             string lecture_code, lecture_name;
             List<Schedule> result = new List<Schedule>();
             Schedule schedule;
 
-            using (data = Select("Lecture_Code, Lecture_Name", "student_lecture", @$"Lecture_Code = (
+            using (data = Select("Lecture_Code, Lecture_Name", "student_lecture", @$"Student_Id = '{studentID}' and
+                                                                                    Lecture_Code = (
                                                                                         select Lecture_Code
                                                                                         from Lecture
                                                                                         where Start_Time = '{time}'
