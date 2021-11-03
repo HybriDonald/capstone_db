@@ -414,7 +414,8 @@ namespace dbLogin
             using (data = Select("Lecture_Code, Lecture_Name", "student_lecture", @$"Lecture_Code = (
                                                                                         select Lecture_Code
                                                                                         from Lecture
-                                                                                        where Start_Time = '{time}')"))
+                                                                                        where Start_Time = '{time}'
+                                                                                        and Week_Day = '{getDay(DateTime.Now)}')"))
             {
                 foreach (DataRow r in data.Tables[0].Rows)
                 {
@@ -426,6 +427,41 @@ namespace dbLogin
             }
 
             return result;
+        }
+    
+        public string getDay(DateTime now) 
+        {
+            string day;
+
+            switch (now.DayOfWeek)
+            {
+                case DayOfWeek.Monday:
+                    day = "월";
+                    break;
+                case DayOfWeek.Tuesday:
+                    day = "화";
+                    break;
+                case DayOfWeek.Wednesday:
+                    day = "수";
+                    break;
+                case DayOfWeek.Thursday:
+                    day = "목";
+                    break;
+                case DayOfWeek.Friday:
+                    day = "금";
+                    break;
+                case DayOfWeek.Saturday:
+                    day = "토";
+                    break;
+                case DayOfWeek.Sunday:
+                    day = "일";
+                    break;
+                default:
+                    day = "일";
+                    break;
+            }
+
+            return day;
         }
     }
 }
