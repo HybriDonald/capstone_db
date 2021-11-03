@@ -2,6 +2,7 @@
 using Oracle.ManagedDataAccess.Client;
 using System.Data;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace dbLogin
 {
@@ -9,14 +10,19 @@ namespace dbLogin
     {
         static void Main(string[] args)
         {
-            Database db = new();
+            //Database db = new();
 
-            var information = db.GetScheduleAboutTime("1200");
+           // var information = db.GetScheduleAboutTime("1200");
 
-            Lecture lec = db.GetLecture(information[0].LectureCode);
+           // Lecture lec = db.GetLecture(information[0].LectureCode);
 
-            information[0].Print();
-            lec.Print();
+
+            System.Console.WriteLine(System.DateTime.Now.ToString("HH" + "00"));
+
+          //  CryptoConfig config = new CryptoConfig();
+
+           // information[0].Print();
+           // lec.Print();
 
             //db.insert("stu", "'test0', 'test0', 'badman', '201507000'");
             //db.update("stu", "id = 'test5'", "stu_no = '201507000'");
