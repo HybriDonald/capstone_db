@@ -415,10 +415,9 @@ namespace dbLogin
         /// 시간은 "HHmm" 형식입니다.
         /// </summary>
         /// <param name="time"></param>
-        public List<Schedule> GetScheduleExistTime(string time, string studentID)
+        public Schedule GetScheduleExistTime(string time, string studentID)
         {
             string lecture_code, lecture_name;
-            List<Schedule> result = new List<Schedule>();
             Schedule schedule;
 
             using (data = Select("Lecture_Code, Lecture_Name", "student_lecture", @$"Student_Id = '{studentID}' and
@@ -428,16 +427,13 @@ namespace dbLogin
                                                                                         where Start_Time = '{time}'
                                                                                         and Week_Day = '{getDay(DateTime.Now)}')"))
             {
-                foreach (DataRow r in data.Tables[0].Rows)
-                {
-                    lecture_code = r["lecture_code"].ToString();
-                    lecture_name = r["lecture_name"].ToString();
-                    schedule = new Schedule(lecture_code, lecture_name);
-                    result.Add(schedule);
-                }
+                DataRow[] r = data.Tables[0].Select();
+                lecture_code = r[0].ItemArray[0].ToString();
+                lecture_name = r[0].ItemArray[1].ToString();
+                schedule = new Schedule(lecture_code, lecture_name);
             }
 
-            return result;
+            return schedule;
         }
     
         /// <summary>
@@ -501,30 +497,27 @@ namespace dbLogin
         /// </summary>
         /// <param name="Professor_Id"></param>
         /// <param name="Start_Time"></param>
-        public List<Lecture> GetLectureExistProfessorTime(string Professor_Id, string Start_Time)
+        public Lecture GetLectureExistProfessorTime(string Professor_Id, string Start_Time)
         {
-            List<Lecture> lectures = new List<Lecture>();
             Lecture lecture;
 
             using (data = Select("*", "Lecture", @$"Professor_Id = '{Professor_Id}' AND
                                                     Start_Time = '{Start_Time}' AND
-                                                    Week_Day = '{getDay(DateTime.Now)}"))
+                                                    Week_Day = '{getDay(DateTime.Now)}'"))
             {
-                foreach (DataRow r in data.Tables[0].Rows)
-                {
-                    lecture = new Lecture(  r["lecture_code"].ToString(),
-                                            r["professor_id"].ToString(),
-                                            r["lecture_name"].ToString(),
-                                            int.Parse(r["credit"].ToString()),
-                                            r["week_day"].ToString(),
-                                            r["start_time"].ToString(),
-                                            r["end_time"].ToString());
-                    lectures.Add(lecture);
-                }
+                DataRow[] row = data.Tables[0].Select();
+                lecture = new Lecture(  row[0].ItemArray[0].ToString(),
+                                        row[0].ItemArray[1].ToString(),
+                                        row[0].ItemArray[2].ToString(),
+                                        int.Parse(row[0].ItemArray[3].ToString()),
+                                        row[0].ItemArray[4].ToString(),
+                                        row[0].ItemArray[5].ToString(),
+                                        row[0].ItemArray[6].ToString());
             }
 
-            return lectures;
+            return lecture;
         }
+
         private string getDay(DateTime now) 
         {
             string day;
