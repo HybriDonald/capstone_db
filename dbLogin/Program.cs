@@ -12,7 +12,7 @@ namespace dbLogin
         {
             Database db = new();
 
-            foreach(var temp in db.GetLectureExistProfessorTime("123412123", "1200"))
+            foreach(var temp in db.GetStudentsExistLecture("TEST1255"))
             {
                 temp.Print();
             }

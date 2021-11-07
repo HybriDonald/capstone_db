@@ -168,7 +168,12 @@ namespace dbLogin
         public DataSet Select(string col, string table, string where)
         {
             DataSet ds = new DataSet();
-            string query = $"select {col} from {table} where {where}";
+            string query =  @$"select {col}
+                               from {table}
+                               where {where}";
+
+            //using (data = Select("s.id, s.pw, s.name, s.student_id", "student s, student_lecture sl", @$"s.student_id = sl.student_id
+//                                                                                                 sl.lecture_code = {Lecture_Code}"))
 
             using (ds = new DataSet())
             {
@@ -445,7 +450,10 @@ namespace dbLogin
             Student student;
             string id, pw, name, studentId;
 
-            using (data = Select("*", "student", $"Lecture_Code = '{Lecture_Code}'"))
+            using (data = Select("s.id, s.pw, s.name, s.student_id", 
+                                 "student s, student_lecture sl", 
+                                 @$"s.student_id = sl.student_id
+                                 AND sl.lecture_code = '{Lecture_Code}'"))
             {
                 foreach (DataRow r in data.Tables[0].Rows)
                 {
