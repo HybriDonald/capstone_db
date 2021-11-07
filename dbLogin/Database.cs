@@ -410,7 +410,7 @@ namespace dbLogin
         /// 시간은 "HHmm" 형식입니다.
         /// </summary>
         /// <param name="time"></param>
-        public List<Schedule> GetScheduleAboutTime(string time, string studentID)
+        public List<Schedule> GetScheduleExistTime(string time, string studentID)
         {
             string lecture_code, lecture_name;
             List<Schedule> result = new List<Schedule>();
@@ -435,6 +435,88 @@ namespace dbLogin
             return result;
         }
     
+        /// <summary>
+        /// 특정 강의를 수강하고 있는 학생들의 리스트를 반환받는 함수입니다.
+        /// </summary>
+        /// <param name="Lecture_Code"></param>
+        public List<Student> GetStudentsExistLecture(string Lecture_Code)
+        {
+            List<Student> Students = new List<Student>();
+            Student student;
+            string id, pw, name, studentId;
+
+            using (data = Select("*", "student", $"Lecture_Code = '{Lecture_Code}'"))
+            {
+                foreach (DataRow r in data.Tables[0].Rows)
+                {
+                    id = r["id"].ToString();
+                    pw = r["pw"].ToString();
+                    name = r["name"].ToString();
+                    studentId = r["student_id"].ToString();
+                    student = new Student(id, pw, studentId, name);
+                    Students.Add(student);
+                }
+            }
+
+            return Students;
+        }
+
+        /// <summary>
+        /// 교수가 강의하고 있는 강의목록을 반환받는 함수입니다.
+        /// </summary>
+        /// <param name="Professor_Id"></param>
+        public List<Lecture> GetLectureExistProfessor(string Professor_Id)
+        {
+            List<Lecture> lectures = new List<Lecture>();
+            Lecture lecture;
+
+            using (data = Select("*", "Lecture", $"Professor_Id = '{Professor_Id}'"))
+            {
+                foreach (DataRow r in data.Tables[0].Rows)
+                {
+                    lecture = new Lecture(  r["lecture_code"].ToString(),
+                                            r["professor_id"].ToString(),
+                                            r["lecture_name"].ToString(),
+                                            int.Parse(r["credit"].ToString()),
+                                            r["week_day"].ToString(),
+                                            r["start_time"].ToString(),
+                                            r["end_time"].ToString());
+                    lectures.Add(lecture);
+                }
+            }
+
+            return lectures;
+        }
+
+        /// <summary>
+        /// 교수가 강의하고 있는 강의들 중 특정 시간의 강의를 반환받는 함수입니다.
+        /// </summary>
+        /// <param name="Professor_Id"></param>
+        /// <param name="Start_Time"></param>
+        public List<Lecture> GetLectureExistProfessorTime(string Professor_Id, string Start_Time)
+        {
+            List<Lecture> lectures = new List<Lecture>();
+            Lecture lecture;
+
+            using (data = Select("*", "Lecture", @$"Professor_Id = '{Professor_Id}' AND
+                                                    Start_Time = '{Start_Time}' AND
+                                                    Week_Day = '{getDay(DateTime.Now)}"))
+            {
+                foreach (DataRow r in data.Tables[0].Rows)
+                {
+                    lecture = new Lecture(  r["lecture_code"].ToString(),
+                                            r["professor_id"].ToString(),
+                                            r["lecture_name"].ToString(),
+                                            int.Parse(r["credit"].ToString()),
+                                            r["week_day"].ToString(),
+                                            r["start_time"].ToString(),
+                                            r["end_time"].ToString());
+                    lectures.Add(lecture);
+                }
+            }
+
+            return lectures;
+        }
         private string getDay(DateTime now) 
         {
             string day;
