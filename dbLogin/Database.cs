@@ -15,7 +15,7 @@ namespace dbLogin
         private const int SCHEDULE = 2;
         
 
-        private static string dbIp = "222.239.64.185";
+        private static string dbIp = "192.168.55.85";
         private static string dbName = "deskDB";
         private static string dbId = "C##capstone_admin";
         private static string dbPw = "yuhanunivcapstone1212";
@@ -23,7 +23,7 @@ namespace dbLogin
         private OracleConnection conn;
         private OracleCommand command;
         private OracleDataAdapter adapter;
-        private DataSet data;
+        private DataSet data = null;
 
 
         public Database()
@@ -146,14 +146,15 @@ namespace dbLogin
                     using (adapter = new OracleDataAdapter(query, conn))
                     {
                         adapter.Fill(ds);
+                        return ds;
                     }
                 }
                 else
                 {
                     Console.WriteLine("ERROR : 데이터 베이스 연결이 실패했습니다.");
                 }
-                return ds;
             }
+            return null;
         }
 
         /// <summary>
@@ -169,18 +170,22 @@ namespace dbLogin
             DataSet ds = new DataSet();
             string query = $"select {col} from {table} where {where}";
 
-            if (IsOpen())
+            using (ds = new DataSet())
             {
-                using (adapter = new OracleDataAdapter(query, conn))
+                if (IsOpen())
                 {
-                    adapter.Fill(ds);
+                    using (adapter = new OracleDataAdapter(query, conn))
+                    {
+                        adapter.Fill(ds);
+                        return ds;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("ERROR : 데이터 베이스 연결이 실패했습니다.");
                 }
             }
-            else
-            {
-                Console.WriteLine("ERROR : 데이터 베이스 연결에 실패했습니다.");
-            }
-            return ds;
+            return null;
         }
 
         /// <summary>
@@ -430,7 +435,7 @@ namespace dbLogin
             return result;
         }
     
-        public string getDay(DateTime now) 
+        private string getDay(DateTime now) 
         {
             string day;
 
@@ -463,6 +468,67 @@ namespace dbLogin
             }
 
             return day;
+        }
+    
+        /// <summary>
+        /// id, pwd로 로그인 체크 _return = 0 : 성공, return = 1  : 비밀번호 불일치, return = 2 : 아이디가 존재하지 않음
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="pwd"></param>
+        /// <param name="flag"></param>
+        /// <returns></returns>
+        public int LoginReturn(string id, string pwd, int flag)
+        {
+            int _return = 0;
+            string Pw;
+            if(flag == 0)
+            {
+                using (data = Select("pw", "professor", $"id = '{id}'"))
+                {
+                    if(data.Tables[0].Rows.Count != 0)
+                    {
+                        DataRow[] row = data.Tables[0].Select();
+                        Pw = row[0].ItemArray[0].ToString();
+                        if (Pw == pwd)
+                        {
+                            _return = 0;
+                        }
+                        else
+                        {
+                            _return = 1;
+                        }
+                    }
+                    else
+                    {
+                        _return = 2;
+                    }
+                   
+                }               
+            }
+            else
+            {
+                using (data = Select("pw", "student", $"id = '{id}'"))
+                {
+                    if(data.Tables[0].Rows.Count != 0)
+                    {
+                        DataRow[] row = data.Tables[0].Select();
+                        Pw = row[0].ItemArray[0].ToString();
+                        if (Pw == pwd)
+                        {
+                            _return = 0;
+                        }
+                        else
+                        {
+                            _return = 1;
+                        }
+                    }
+                    else
+                    {
+                        _return = 2;
+                    }                    
+                }
+            }
+            return _return;
         }
     }
 }
