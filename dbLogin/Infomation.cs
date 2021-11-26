@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace dbLogin
 {
@@ -104,6 +100,40 @@ namespace dbLogin
         {
             Console.WriteLine($"Lecture_code = {lecture_code}, Lecture_name = {lecture_name}, Professor_Id = {professor_id}"
                             + $"Credit = {credit}, Week_day = {week_day}, Start_time = {start_time}, End_Time = {end_time}");
+        }
+    }
+
+    class Attendance : IInformation
+    {
+        private int Attendance_code {get; set;}
+        private string student_Id {get; set;}
+        private string lecture_code {get; set;}
+        private int Week_Code {get; set;}
+        private int first_class {get; set;}
+        private int second_class {get; set;}
+        private int third_class {get; set;}
+
+        public Attendance(int Attendance_code, string student_Id, string lecture_code,
+                    int Week_Code, int first_class,
+                    int second_class, int third_class)
+        {
+            this.Attendance_code = Attendance_code;
+            this.student_Id = student_Id;
+            this.lecture_code = lecture_code;
+            this.Week_Code = Week_Code;
+            this.first_class = first_class;
+            this.second_class = second_class;
+            this.third_class = third_class;
+        }
+
+        public void Print()
+        {
+            System.Console.WriteLine("Attendance_code = " + Attendance_code);
+            System.Console.WriteLine("student_Id = " + student_Id);
+            System.Console.WriteLine("Week_Code = " + Week_Code);
+            System.Console.WriteLine("first_class = " + first_class);
+            System.Console.WriteLine("second_class = " + second_class);
+            System.Console.WriteLine("third_class = " + third_class);
         }
     }
 }
